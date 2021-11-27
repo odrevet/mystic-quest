@@ -19,7 +19,11 @@ MAP_HEIGHT = 8
 def main():
     map_screen_index_x = 0
     map_screen_index_y = 0
+    
+    tile_layer = tm.get_layer_by_name("Tile Layer 1")
+    
     done = False
+
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -32,7 +36,7 @@ def main():
                 elif event.key == pygame.K_y:
                     map_screen_index_y += MAP_HEIGHT
 
-        tile_layer = tm.get_layer_by_name("Tile Layer 1")
+        
         for (
             x,
             y,
