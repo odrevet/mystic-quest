@@ -38,7 +38,12 @@ def main():
             y,
             gid,
         ) in tile_layer:
-            if x > map_screen_index_x and y > map_screen_index_y:
+            if (
+                x > map_screen_index_x
+                and x <= map_screen_index_x + MAP_WIDTH
+                and y > map_screen_index_y
+                and y <= map_screen_index_y + MAP_HEIGHT
+            ):
                 tile = tm.get_tile_image_by_gid(gid)
                 screen.blit(
                     tile,
@@ -47,7 +52,6 @@ def main():
                         (y - map_screen_index_y - 1) * tm.tileheight,
                     ),
                 )
-
         pygame.display.update()
         clock.tick(30)
 
