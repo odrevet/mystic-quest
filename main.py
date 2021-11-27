@@ -10,7 +10,10 @@ screen = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption("Mystic Quest")
 clock = pygame.time.Clock()
 
-tm = pytmx.load_pygame("en/mapas/mapa_00_00.tmx")
+map_hi = "{:02x}".format(0)
+map_low = "{:02x}".format(0)
+
+tm = pytmx.load_pygame(f"en/mapas/mapa_{map_hi}_{map_low}.tmx")
 
 MAP_WIDTH = 10
 MAP_HEIGHT = 8
@@ -19,9 +22,9 @@ MAP_HEIGHT = 8
 def main():
     map_screen_index_x = 0
     map_screen_index_y = 0
-    
+
     tile_layer = tm.get_layer_by_name("Tile Layer 1")
-    
+
     done = False
 
     while not done:
@@ -36,7 +39,6 @@ def main():
                 elif event.key == pygame.K_y:
                     map_screen_index_y += MAP_HEIGHT
 
-        
         for (
             x,
             y,
