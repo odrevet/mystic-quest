@@ -15,10 +15,10 @@ tm = pytmx.load_pygame("en/mapas/mapa_00_00.tmx")
 MAP_WIDTH = 10
 MAP_HEIGHT = 8
 
-map_index_x = 0
-map_index_y = 0
 
 def main():
+    map_screen_index_x = 0
+    map_screen_index_y = 0
     done = False
     while not done:
         for event in pygame.event.get():
@@ -27,6 +27,10 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     done = True
+                elif event.key == pygame.K_x:
+                    map_screen_index_x += MAP_WIDTH
+                elif event.key == pygame.K_y:
+                    map_screen_index_y += MAP_HEIGHT
 
         tile_layer = tm.get_layer_by_name("Tile Layer 1")
         for (
@@ -34,9 +38,15 @@ def main():
             y,
             gid,
         ) in tile_layer:
-            if x < MAP_WIDTH and y < MAP_HEIGHT:
+            if x > map_screen_index_x and y > map_screen_index_y:
                 tile = tm.get_tile_image_by_gid(gid)
-                screen.blit(tile, (x * tm.tilewidth, y * tm.tileheight))
+                screen.blit(
+                    tile,
+                    (
+                        (x - map_screen_index_x - 1) * tm.tilewidth,
+                        (y - map_screen_index_y - 1) * tm.tileheight,
+                    ),
+                )
 
         pygame.display.update()
         clock.tick(30)
