@@ -50,17 +50,17 @@ def main():
             gid,
         ) in tile_layer:
             if (
-                x > map_screen_index_x
-                and x <= map_screen_index_x + MAP_WIDTH
-                and y > map_screen_index_y
-                and y <= map_screen_index_y + MAP_HEIGHT
+                x > map_screen_index_x - 1
+                and x <= map_screen_index_x + MAP_WIDTH - 1
+                and y > map_screen_index_y - 1
+                and y <= map_screen_index_y + MAP_HEIGHT - 1
             ):
                 tile = tm.get_tile_image_by_gid(gid)
                 surface_screen.blit(
                     tile,
                     (
-                        (x - map_screen_index_x - 1) * tm.tilewidth,
-                        (y - map_screen_index_y - 1) * tm.tileheight,
+                        (x - map_screen_index_x ) * tm.tilewidth,
+                        (y - map_screen_index_y ) * tm.tileheight,
                     ),
                 )
 
