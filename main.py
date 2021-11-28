@@ -35,10 +35,14 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     done = True
-                elif event.key == pygame.K_x:
-                    map_screen_index_x += MAP_WIDTH
-                elif event.key == pygame.K_y:
+                elif event.key == pygame.K_UP:
+                    map_screen_index_y -= MAP_HEIGHT
+                elif event.key == pygame.K_DOWN:
                     map_screen_index_y += MAP_HEIGHT
+                elif event.key == pygame.K_LEFT:
+                    map_screen_index_x -= MAP_WIDTH
+                elif event.key == pygame.K_RIGHT:
+                    map_screen_index_x += MAP_WIDTH
 
         for (
             x,
