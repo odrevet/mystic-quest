@@ -3,9 +3,10 @@ import pytmx
 
 pygame.init()
 
-display_width = 160
-display_height = 144
-screen = pygame.display.set_mode((display_width, display_height))
+resolution_screen = (160, 144)
+resolution_window = (640, 480)
+surface_window = pygame.display.set_mode(resolution_window)
+surface_screen = pygame.Surface(resolution_screen)
 
 pygame.display.set_caption("Mystic Quest")
 clock = pygame.time.Clock()
@@ -51,14 +52,18 @@ def main():
                 and y <= map_screen_index_y + MAP_HEIGHT
             ):
                 tile = tm.get_tile_image_by_gid(gid)
-                screen.blit(
+                surface_screen.blit(
                     tile,
                     (
                         (x - map_screen_index_x - 1) * tm.tilewidth,
                         (y - map_screen_index_y - 1) * tm.tileheight,
                     ),
                 )
+
+        scaled_win = pygame.transform.scale(surface_screen, surface_window.get_size())
+        surface_window.blit(scaled_win, (0, 0))
         pygame.display.update()
+
         clock.tick(30)
 
 
