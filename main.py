@@ -21,8 +21,8 @@ MAP_HEIGHT = 8
 
 
 def main():
-    map_screen_index_x = 0
-    map_screen_index_y = 0
+    map_screen_index_x = 5 * MAP_WIDTH
+    map_screen_index_y = 6 * MAP_HEIGHT
 
     tile_layer = tm.get_layer_by_name("Tile Layer 1")
 
