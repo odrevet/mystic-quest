@@ -14,7 +14,7 @@ def read_scripts():
         for i in range(0, len(scripts_arr), 3):
           scripts.add(Script(i, i + 1, i + 2))
 
-        return scripts
+        return variable_declarations, scripts
 
 def main():
     pygame.init()
