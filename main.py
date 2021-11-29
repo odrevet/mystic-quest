@@ -1,20 +1,29 @@
 import pygame
 import pytmx
 import re
+#from tokens import *
+#from lexer import Lexer
 from script import Script
 
+
 def read_scripts():
-    with open('en/scripts/scripts.txt', 'r') as file:
+    with open("en/scripts/scripts.txt", "r") as file:
         scripts_str = file.read()
-        scripts_arr = re.split(r"--- script: ([a-f0-9]{4}) addr: ([a-f0-9]{4}) ------------------.*", scripts_str)
+        scripts_arr = re.split(
+            r"--- script: ([a-f0-9]{4}) addr: ([a-f0-9]{4}) ------------------.*",
+            scripts_str,
+        )
 
         variable_declarations = scripts_arr.pop(0)
 
         scripts = []
         for i in range(0, len(scripts_arr), 3):
-          scripts.add(Script(i, i + 1, i + 2))
+            scripts.append(
+                Script(scripts_arr[i], scripts_arr[i + 1], scripts_arr[i + 2])
+            )
 
         return variable_declarations, scripts
+
 
 def main():
     pygame.init()
@@ -41,6 +50,11 @@ def main():
     tile_layer = tm.get_layer_by_name("Tile Layer 1")
 
     done = False
+
+    #vars, scripts = read_scripts()
+    #for tok in Lexer(scripts[1].instructions):
+    #    if tok.name != EOF:
+    #        print(tok)
 
     while not done:
         for event in pygame.event.get():
@@ -73,8 +87,8 @@ def main():
                 surface_screen.blit(
                     tile,
                     (
-                        (x - map_screen_index_x ) * tm.tilewidth,
-                        (y - map_screen_index_y ) * tm.tileheight,
+                        (x - map_screen_index_x) * tm.tilewidth,
+                        (y - map_screen_index_y) * tm.tileheight,
                     ),
                 )
 
