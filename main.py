@@ -1,26 +1,40 @@
 import pygame
 import pytmx
+import re
+from script import Script
 
-pygame.init()
+def read_scripts():
+    with open('en/scripts/scripts.txt', 'r') as file:
+        scripts_str = file.read()
+        scripts_arr = re.split(r"--- script: ([a-f0-9]{4}) addr: ([a-f0-9]{4}) ------------------.*", scripts_str)
 
-resolution_screen = (160, 144)
-resolution_window = (640, 480)
-surface_window = pygame.display.set_mode(resolution_window)
-surface_screen = pygame.Surface(resolution_screen)
+        variable_declarations = scripts_arr.pop(0)
 
-pygame.display.set_caption("Mystic Quest")
-clock = pygame.time.Clock()
+        scripts = []
+        for i in range(0, len(scripts_arr), 3):
+          scripts.add(Script(i, i + 1, i + 2))
 
-map_hi = "{:02x}".format(0)
-map_low = "{:02x}".format(0)
-
-tm = pytmx.load_pygame(f"en/mapas/mapa_{map_hi}_{map_low}.tmx")
-
-MAP_WIDTH = 10
-MAP_HEIGHT = 8
-
+        return scripts
 
 def main():
+    pygame.init()
+
+    resolution_screen = (160, 144)
+    resolution_window = (640, 480)
+    surface_window = pygame.display.set_mode(resolution_window)
+    surface_screen = pygame.Surface(resolution_screen)
+
+    pygame.display.set_caption("Mystic Quest")
+    clock = pygame.time.Clock()
+
+    map_hi = "{:02x}".format(0)
+    map_low = "{:02x}".format(0)
+
+    tm = pytmx.load_pygame(f"en/mapas/mapa_{map_hi}_{map_low}.tmx")
+
+    MAP_WIDTH = 10
+    MAP_HEIGHT = 8
+
     map_screen_index_x = 5 * MAP_WIDTH
     map_screen_index_y = 6 * MAP_HEIGHT
 
