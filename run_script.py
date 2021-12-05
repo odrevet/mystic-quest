@@ -40,9 +40,8 @@ reserved = {
 }
 
 tokens = [
-    "HEX",
     "ID",
-    "NEWLINE",
+    "HEX",
     "DOLLAR",
     "LPAREN",
     "RPAREN",
@@ -65,7 +64,7 @@ t_ignore = " "
 
 
 def t_ID(t):
-    r"[A-Za-z_]+"
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value, "ID")  # Check for reserved words
     return t
 
