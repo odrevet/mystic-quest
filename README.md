@@ -1,7 +1,7 @@
 # Python packages
 
 ```
-pip install pygame pytmx
+pip install pygame pytmx ply
 ```
 
 # Game assets
