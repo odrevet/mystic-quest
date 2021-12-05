@@ -40,9 +40,8 @@ reserved = {
 }
 
 tokens = [
-    "HEX",
     "ID",
-    "NEWLINE",
+    "HEX",
     "DOLLAR",
     "LPAREN",
     "RPAREN",
@@ -60,14 +59,12 @@ t_LBRACKET = r"\["
 t_RBRACKET = r"\]"
 t_ASSIGN = r"="
 t_COMMA = r"\,"
-t_LET = r"let"
-t_VAR = r"var"
 
 t_ignore = " "
 
 
 def t_ID(t):
-    r"[A-Z_]+"
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value, "ID")  # Check for reserved words
     return t
 
