@@ -31,12 +31,12 @@ print(instructions)
 
 ## Lexer ##
 reserved = {
-    "IF": "IF",
-    "ELSE": "ELSE",
-    "END": "END",
+    #"IF": "IF",
+    #"ELSE": "ELSE",
+    #"END": "END",
     "let": "LET",
     "var": "VAR",
-    "FOR": "FOR",
+    #"FOR": "FOR",
 }
 
 tokens = [
@@ -49,6 +49,7 @@ tokens = [
     "RBRACKET",
     "ASSIGN",
     "COMMA",
+    "NEWLINE"
 ] + list(reserved.values())
 
 t_HEX = r"[0-9a-f]+"
@@ -86,7 +87,6 @@ variables = {}
 def p_program(p):
     """program : function_call
     | program function_call
-    | program NOOP
     | program NEWLINE"""
     pass
 
