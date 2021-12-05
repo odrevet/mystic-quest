@@ -87,6 +87,8 @@ variables = {}
 def p_program(p):
     """program : function_call
     | program function_call
+    | variable_declaration
+    | program variable_declaration
     | program NEWLINE"""
     pass
 
@@ -116,10 +118,10 @@ def p_function_call(p):
             f(p[2])
 
 
-# def p_variable_declaration(p):
-#    """variable_declaration : LET VARNAME ASSIGN VAR LBRACKET HEX RBRACKET"""
-#    print("WIP Variable declaration")
-#    print("TODO Add name (VARNAME) and identifier (HEX) in variable hash")
+def p_variable_declaration(p):
+   """variable_declaration : LET ID ASSIGN VAR LBRACKET HEX RBRACKET"""
+   print("WIP Variable declaration")
+   print("TODO Add name (VARNAME) and identifier (HEX) in variable hash")
 
 
 def p_error(p):
