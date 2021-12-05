@@ -1,31 +1,15 @@
 import pygame
 import pytmx
-import re
-from script import Script
+
+from script import Script, read_scripts
 from hero import *
 
-
-def read_scripts():
-    with open("en/scripts/scripts.txt", "r") as file:
-        scripts_str = file.read()
-        scripts_arr = re.split(
-            r"--- script: ([a-f0-9]{4}) addr: ([a-f0-9]{4}) ------------------.*",
-            scripts_str,
-        )
-
-        variable_declarations = scripts_arr.pop(0)
-
-        scripts = []
-        for i in range(0, len(scripts_arr), 3):
-            scripts.append(
-                Script(scripts_arr[i], scripts_arr[i + 1], scripts_arr[i + 2])
-            )
-
-        return variable_declarations, scripts
 
 
 def main():
     pygame.init()
+    pygame.font.init()
+    font = pygame.font.SysFont("", 12)
 
     resolution_screen = (160, 144)
     resolution_window = (640, 480)
@@ -47,20 +31,16 @@ def main():
     map_screen_index_x = 5 * MAP_WIDTH
     map_screen_index_y = 6 * MAP_HEIGHT
 
-
-    event_layer= tm.get_layer_by_name("Object Layer eventos")
-    for event in event_layer:
-        print(event.x, event.y, event.properties['nroScript'])
-
+    event_layer = tm.get_layer_by_name("Object Layer eventos")
     tile_layer = tm.get_layer_by_name("Tile Layer 1")
 
-
-
     # hero
-    hero = Hero()
+    hero = Hero(72, 42)
+
+    # scripts
+    variable_declarations, scripts = read_scripts()
 
     done = False
-
     while not done:
         ## Events
         for event in pygame.event.get():
@@ -69,6 +49,29 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     done = True
+                elif event.key == pygame.K_d:
+                    print(f"hero screen coords: {hero.x} {hero.y}")
+                    print(
+                        f"hero map coords: {hero.x + map_screen_index_x} {hero.y + map_screen_index_y}"
+                    )
+
+                    hero_bounding_box_map = hero.bounding_box.copy()
+                    hero_bounding_box_map.x += map_screen_index_x
+                    hero_bounding_box_map.y += map_screen_index_y
+                    for game_event in event_layer:
+                        if hero_bounding_box_map.colliderect(
+                            (game_event.x, game_event.y, 16, 16)
+                        ):
+                            nro_script = game_event.properties["nroScript"]
+                            script = next(
+                                (
+                                    script
+                                    for script in scripts
+                                    if script.id == nro_script
+                                ),
+                                None,
+                            )
+                            print(script.instructions)
 
                 if event.key == pygame.K_LEFT:
                     hero.is_moving = True
@@ -93,11 +96,13 @@ def main():
 
                 if event.mod & pygame.KMOD_LSHIFT:
                     if event.key == pygame.K_UP:
-                        map_screen_index_y -= MAP_HEIGHT
+                        if map_screen_index_y > 0:
+                            map_screen_index_y -= MAP_HEIGHT
                     elif event.key == pygame.K_DOWN:
                         map_screen_index_y += MAP_HEIGHT
                     elif event.key == pygame.K_LEFT:
-                        map_screen_index_x -= MAP_WIDTH
+                        if map_screen_index_x > 0:
+                            map_screen_index_x -= MAP_WIDTH
                     elif event.key == pygame.K_RIGHT:
                         map_screen_index_x += MAP_WIDTH
             elif event.type == pygame.KEYUP:
@@ -120,21 +125,27 @@ def main():
             if hero.direction == Direction.LEFT:
                 hero.x -= 1
 
+        ## Logic
         # check boundaries
-        if(hero.x + hero.SIZE > tm.tilewidth * MAP_WIDTH):
+        if hero.x + hero.SIZE > tm.tilewidth * MAP_WIDTH:
             hero.x = 0
             map_screen_index_x += MAP_WIDTH
-        elif(hero.x < 0):
+        elif hero.x < 0:
             hero.x = 144
             map_screen_index_x -= MAP_WIDTH
-        elif(hero.y + hero.SIZE > 160):
+        elif hero.y + hero.SIZE > 160:
             hero.y = 0
             map_screen_index_y += MAP_HEIGHT
-        elif(hero.y < 0):
+        elif hero.y < 0:
             hero.y = 120
             map_screen_index_y -= MAP_HEIGHT
 
+        hero.update()
+
         ## Display
+        # clear screen
+        surface_screen.fill(((255, 255, 255)))
+
         # map
         for (
             x,
@@ -158,6 +169,10 @@ def main():
 
         # hero
         hero.draw(surface_screen)
+
+        # HUD
+        text_surface = font.render(f" HP    {hero.hp} MP    {hero.mp} G    {hero.gold}", False,  (0, 0, 0))
+        surface_screen.blit(text_surface, (0, 130))
 
         # update display
         scaled_win = pygame.transform.scale(surface_screen, surface_window.get_size())
