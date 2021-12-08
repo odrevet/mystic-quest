@@ -1,48 +1,55 @@
-# call script by id or parse variable declaration if parameter is "vars"
-
 import sys
+import argparse
 import ply.lex as lex
 import ply.yacc as yacc
 
 from script import read_scripts
 import function
 
+class Variable:
+    def __init__(self, name, id, value):
+        self.name = name
+        self.id = id
+        self.value = value
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--script")
+parser.add_argument('--variable', dest='variable', action='store_true')
+parser.set_defaults(variable=False)
+args = parser.parse_args()
+
 variable_declarations, scripts = read_scripts()
 
-nro_script = sys.argv[1]
-
-instructions = ""
-
-if nro_script == "vars":
-    instructions = variable_declarations
-else:
+script = None
+if args.script is not None:
     script = next(
-        (script for script in scripts if script.id == nro_script),
+        (script for script in scripts if script.id == args.script),
         None,
     )
 
     if script is None:
-        sys.exit()
-
-    instructions = script.instructions
-
-print(instructions)
+        print(f"Script {args.script} not found")
+    else:
+        print(script.instructions)
 
 
 ## Lexer ##
 reserved = {
-    #"IF": "IF",
+    "IF": "IF",
     #"ELSE": "ELSE",
     #"END": "END",
     "let": "LET",
     "var": "VAR",
     #"FOR": "FOR",
+    "SET_ON" : "SET_ON",
+    "SET_OFF" : "SET_OFF"
 }
 
 tokens = [
     "ID",
     "HEX",
     "DOLLAR",
+    #"EXCLAMATION",
     "LPAREN",
     "RPAREN",
     "LBRACKET",
@@ -54,6 +61,7 @@ tokens = [
 
 t_HEX = r"[0-9a-f]+"
 t_DOLLAR = r"\$"
+#t_EXCLAMATION = r"\!"
 t_LPAREN = r"\("
 t_RPAREN = r"\)"
 t_LBRACKET = r"\["
@@ -81,17 +89,21 @@ def t_error(t):
 lexer = lex.lex()
 start = "program"
 
-variables = {}
+variables = []
 
 ## Parser ##
 def p_program(p):
-    """program : function_call
-    | program function_call
-    | variable_declaration
-    | program variable_declaration
-    | program NEWLINE"""
+    """program : statement
+    | program statement"""
     pass
 
+def p_statement(p):
+    """statement : function_call
+    | variable_declaration
+    | condition
+    | set
+    | NEWLINE"""
+    pass
 
 # TODO named parameters dynamic repetition
 def p_function_call(p):
@@ -120,20 +132,54 @@ def p_function_call(p):
 
 def p_variable_declaration(p):
    """variable_declaration : LET ID ASSIGN VAR LBRACKET HEX RBRACKET"""
-   print("WIP Variable declaration")
-   print("TODO Add name (VARNAME) and identifier (HEX) in variable hash")
+   variable = Variable(p[2], p[6], False)
+   variables.append(variable)
+
+
+def p_condition(p):
+    "condition : IF LPAREN ID RPAREN"
+    condition_is_true = next(
+        (variable for variable in variables if (variable.name == p[3] and variable.value == True)),
+        False,
+    )
+    if(condition_is_true):
+        print("exec block")
+    else:
+        print("skip block")
+
+
+def p_set(p):
+    """set : SET_ON ID
+           | SET_OFF ID"""
+    variable = next(
+        (variable for variable in variables if variable.name == p[2]),
+        None,
+    )
+
+    if variable is None:
+        print(f"Warning: Variable {p[2]} not found when call to {p[1]}")
+    else:
+        variable.value = p[1] == "SET_ON"
 
 
 def p_error(p):
     print("Syntax error in input!")
 
 
-# Display tokens
-lexer.input(instructions)
-for tok in lexer:
-    print(tok)
-
 # Parse and print result
 parser = yacc.yacc()
-result = parser.parse(instructions, debug=0)
-print(result)
+
+if args.variable:
+    lexer.input(variable_declarations)
+    for tok in lexer:
+        print(tok)
+
+    parser.parse(variable_declarations)
+
+if script is not None:
+    lexer.input(script.instructions)
+    for tok in lexer:
+        print(tok)
+
+    result = parser.parse(script.instructions)
+    print(result)
