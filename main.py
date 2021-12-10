@@ -20,10 +20,11 @@ def main():
     clock = pygame.time.Clock()
 
     # map
-    map_hi = "{:02x}".format(0)
-    map_low = "{:02x}".format(0)
+    map_number = 0
+    map_number_dec = "{:02x}".format(map_number)
+    map_number_hex = "{:02x}".format(map_number)
 
-    tm = pytmx.load_pygame(f"en/mapas/mapa_{map_hi}_{map_low}.tmx")
+    tm = pytmx.load_pygame(f"en/mapas/mapa_{map_number_dec}_{map_number_hex}.tmx")
 
     MAP_WIDTH = 10
     MAP_HEIGHT = 8
