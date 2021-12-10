@@ -1,7 +1,7 @@
 import pygame
 import pytmx
 
-from script import Script, read_scripts
+from interpreter import *
 from hero import *
 
 
@@ -37,8 +37,11 @@ def main():
     # hero
     hero = Hero(72, 42)
 
-    # scripts
-    variable_declarations, scripts = read_scripts()
+    # script
+    lexer = lex.lex()
+    parser = yacc.yacc()
+    parser.parse(variable_declarations)
+ 
 
     done = False
     while not done:
@@ -50,28 +53,16 @@ def main():
                 if event.key == pygame.K_q:
                     done = True
                 elif event.key == pygame.K_d:
-                    print(f"hero screen coords: {hero.x} {hero.y}")
-                    print(
-                        f"hero map coords: {hero.x + map_screen_index_x} {hero.y + map_screen_index_y}"
-                    )
-
                     hero_bounding_box_map = hero.bounding_box.copy()
-                    hero_bounding_box_map.x += map_screen_index_x
-                    hero_bounding_box_map.y += map_screen_index_y
+                    hero_bounding_box_map.x += map_screen_index_x * tm.tilewidth
+                    hero_bounding_box_map.y += map_screen_index_y * tm.tileheight
                     for game_event in event_layer:
                         if hero_bounding_box_map.colliderect(
-                            (game_event.x, game_event.y, 16, 16)
+                            (game_event.x, game_event.y, tm.tilewidth, tm.tileheight)
                         ):
                             nro_script = game_event.properties["nroScript"]
-                            script = next(
-                                (
-                                    script
-                                    for script in scripts
-                                    if script.id == nro_script
-                                ),
-                                None,
-                            )
-                            print(script.instructions)
+                            print(nro_script)
+                            parser.parse(f"CALL ${nro_script}")
 
                 if event.key == pygame.K_LEFT:
                     hero.is_moving = True
