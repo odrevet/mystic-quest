@@ -29,11 +29,11 @@ class Game:
         self.parser.parse(variable_declarations)
 
     def load_map(self, map_number_hex):
-        map_number_dec = "{:02x}".format(int(map_number_hex, 16))
+        map_number_dec = "{:02d}".format(int(map_number_hex, 16))
         self.tm = pytmx.load_pygame(f"en/mapas/mapa_{map_number_dec}_{map_number_hex}.tmx")
         self.event_layer = self.tm.get_layer_by_name("Object Layer eventos")
         self.tile_layer = self.tm.get_layer_by_name("Tile Layer 1")
-        
+
     def display(self, surface_screen, surface_window):
         surface_screen.fill(((255, 255, 255)))
 
