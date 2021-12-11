@@ -15,6 +15,7 @@ class Variable:
 variables = []
 variable_declarations, scripts = read_scripts()
 debug_tokens = False
+game = None
 
 def print_tokens(lexer):
     for tok in lexer:
@@ -108,11 +109,11 @@ def p_function_call(p):
         return
 
     if len(p) == 2:
-        f()
+        f(game)
     elif len(p) == 21:
-        f(p[13], p[15], p[17], p[19])
+        f(game, p[13], p[15], p[17], p[19])
     elif len(p) == 3:
-        f(p[2])
+        f(game, p[2])
 
 
 def p_call(p):
