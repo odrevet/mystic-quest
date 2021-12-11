@@ -125,14 +125,15 @@ def p_call(p):
     if script is None:
         print(f"CALL: Script {p[3]} not found")
     else:
-        parser = yacc.yacc()
-        parser.parse(script.instructions)
-        
+        lexer = lex.lex()
         if debug_tokens:
-            lexer = lex.lex()
             lexer.input(script.instructions)
             print(script.instructions)
             print_tokens(lexer)
+        parser = yacc.yacc()
+        parser.parse(script.instructions)
+        
+
 
 def p_variable_declaration(p):
     """variable_declaration : LET ID ASSIGN VAR LBRACKET HEX RBRACKET"""
