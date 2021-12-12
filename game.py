@@ -23,8 +23,6 @@ class Game:
         self.map_screen_index_x = 5 * MAP_WIDTH
         self.map_screen_index_y = 6 * MAP_HEIGHT
 
-
-
         # script
         self.lexer = lex.lex()
         self.parser = yacc.yacc()
@@ -32,7 +30,9 @@ class Game:
 
     def load_map(self, map_number_hex):
         map_number_dec = "{:02d}".format(int(map_number_hex, 16))
-        self.tm = pytmx.load_pygame(f"en/mapas/mapa_{map_number_dec}_{map_number_hex}.tmx")
+        self.tm = pytmx.load_pygame(
+            f"en/mapas/mapa_{map_number_dec}_{map_number_hex}.tmx"
+        )
         self.event_layer = self.tm.get_layer_by_name("Object Layer eventos")
         self.tile_layer = self.tm.get_layer_by_name("Tile Layer 1")
 
@@ -115,7 +115,12 @@ class Game:
                 hero_bounding_box_map.y += self.map_screen_index_y * self.tm.tileheight
                 for game_event in self.event_layer:
                     if hero_bounding_box_map.colliderect(
-                        (game_event.x, game_event.y, self.tm.tilewidth, self.tm.tileheight)
+                        (
+                            game_event.x,
+                            game_event.y,
+                            self.tm.tilewidth,
+                            self.tm.tileheight,
+                        )
                     ):
                         nro_script = game_event.properties["nroScript"]
                         print(nro_script)
@@ -159,7 +164,7 @@ class Game:
                     if self.map_screen_index_x > 0:
                         self.map_screen_index_x -= MAP_WIDTH
                 elif event.key == pygame.K_RIGHT:
-                    #print(f"-> {self.tm.properties}")
+                    # print(f"-> {self.tm.properties}")
                     self.map_screen_index_x += MAP_WIDTH
         elif event.type == pygame.KEYUP:
             if event.key in [
@@ -179,11 +184,11 @@ class Game:
         self.hero.x = int(XX, 16) * 8
         self.hero.y = int(YY, 16) * 8
         self.block_number = int(BB, 16)
-        print(self.block_number)
-        self.map_screen_index_x = 0 # TODO from BB
-        self.map_screen_index_y = 0
         self.load_map(MM)
+        self.map_screen_index_x = (self.block_number % int(self.tm.properties['sizeX'])) * MAP_WIDTH
+        self.map_screen_index_y = (self.block_number // int(self.tm.properties['sizeX'])) * MAP_HEIGHT
 
     def SCRIPT_ENTRAR_BLOQUE(self):
+        print(f"-> {self.tm.properties}")
         print(f"-> {self.tm.get_layer_by_name('Object Layer bloquesA')[0].properties}")
         print(f"-> {self.tm.get_layer_by_name('Object Layer bloquesB')[0].properties}")
