@@ -16,6 +16,7 @@ class Game:
         self.tm = None
         self.clock = pygame.time.Clock()
 
+        self.block_number = 0
         self.load_map("00")
 
         self.map_screen_index_x = 5 * MAP_WIDTH
@@ -150,6 +151,7 @@ class Game:
                     if self.map_screen_index_x > 0:
                         self.map_screen_index_x -= MAP_WIDTH
                 elif event.key == pygame.K_RIGHT:
+                    #print(f"-> {self.tm.properties}")
                     self.map_screen_index_x += MAP_WIDTH
         elif event.type == pygame.KEYUP:
             if event.key in [
@@ -168,7 +170,12 @@ class Game:
         print(f"Teleport to {MM} {BB} {XX} {YY}")
         self.hero.x = int(XX, 16) * 8
         self.hero.y = int(YY, 16) * 8
-        block_number = int(BB, 16)
+        self.block_number = int(BB, 16)
+        print(self.block_number)
         self.map_screen_index_x = 0 # TODO from BB
         self.map_screen_index_y = 0
         self.load_map(MM)
+
+    def SCRIPT_ENTRAR_BLOQUE(self):
+        print(f"-> {self.tm.get_layer_by_name('Object Layer bloquesA')[0].properties}")
+        print(f"-> {self.tm.get_layer_by_name('Object Layer bloquesB')[0].properties}")
