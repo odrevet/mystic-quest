@@ -1,3 +1,4 @@
+import readline
 import pygame
 import pytmx
 
@@ -119,6 +120,13 @@ class Game:
                         nro_script = game_event.properties["nroScript"]
                         print(nro_script)
                         self.parser.parse(f"CALL ${nro_script}")
+
+            if event.key == pygame.K_c:
+                instructions = input("> ")
+                if debug_tokens:
+                    self.lexer.input(instructions)
+                    print_tokens(self.lexer)
+                self.parser.parse(instructions)
 
             if event.key == pygame.K_LEFT:
                 self.hero.is_moving = True
