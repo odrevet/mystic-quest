@@ -107,25 +107,25 @@ class Game:
 
         self.hero.update()
 
+        # check tile events
+        hero_bounding_box_map = self.hero.bounding_box.copy()
+        hero_bounding_box_map.x += self.map_screen_index_x * self.tm.tilewidth
+        hero_bounding_box_map.y += self.map_screen_index_y * self.tm.tileheight
+        for game_event in self.event_layer:
+            if hero_bounding_box_map.colliderect(
+                (
+                    game_event.x,
+                    game_event.y,
+                    self.tm.tilewidth,
+                    self.tm.tileheight,
+                )
+            ):
+                nro_script = game_event.properties["nroScript"]
+                print(nro_script)
+                self.parser.parse(f"CALL ${nro_script}")
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_d:
-                hero_bounding_box_map = self.hero.bounding_box.copy()
-                hero_bounding_box_map.x += self.map_screen_index_x * self.tm.tilewidth
-                hero_bounding_box_map.y += self.map_screen_index_y * self.tm.tileheight
-                for game_event in self.event_layer:
-                    if hero_bounding_box_map.colliderect(
-                        (
-                            game_event.x,
-                            game_event.y,
-                            self.tm.tilewidth,
-                            self.tm.tileheight,
-                        )
-                    ):
-                        nro_script = game_event.properties["nroScript"]
-                        print(nro_script)
-                        self.parser.parse(f"CALL ${nro_script}")
-
             if event.key == pygame.K_c:
                 instructions = input("> ")
                 if debug_tokens:
@@ -165,8 +165,11 @@ class Game:
                         self.map_screen_index_x -= MAP_WIDTH
                 elif event.key == pygame.K_RIGHT:
                     self.map_screen_index_x += MAP_WIDTH
-                    if self.map_screen_index_x >= int(self.tm.properties['sizeX'], 16) * MAP_WIDTH:
-                         self.map_screen_index_x = 0
+                    if (
+                        self.map_screen_index_x
+                        >= int(self.tm.properties["sizeX"], 16) * MAP_WIDTH
+                    ):
+                        self.map_screen_index_x = 0
         elif event.type == pygame.KEYUP:
             if event.key in [
                 pygame.K_LEFT,
@@ -186,8 +189,12 @@ class Game:
         self.hero.y = int(YY, 16) * 8
         self.block_number = int(BB, 16)
         self.load_map(MM)
-        self.map_screen_index_x = (self.block_number % int(self.tm.properties['sizeX'], 16)) * MAP_WIDTH
-        self.map_screen_index_y = (self.block_number // int(self.tm.properties['sizeX'], 16)) * MAP_HEIGHT
+        self.map_screen_index_x = (
+            self.block_number % int(self.tm.properties["sizeX"], 16)
+        ) * MAP_WIDTH
+        self.map_screen_index_y = (
+            self.block_number // int(self.tm.properties["sizeX"], 16)
+        ) * MAP_HEIGHT
 
     def SCRIPT_ENTRAR_BLOQUE(self):
         print(f"-> {self.tm.properties}")
