@@ -2,7 +2,6 @@ import ply.yacc as yacc
 import ply.lex as lex
 
 from script import read_scripts
-import function
 
 
 class Variable:
@@ -103,17 +102,17 @@ def p_function_call(p):
     | ID LPAREN ID COMMA ID COMMA ID RPAREN ASSIGN LPAREN HEX COMMA HEX COMMA HEX RPAREN
     | ID LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN ASSIGN LPAREN HEX COMMA HEX COMMA HEX COMMA HEX RPAREN"""
     try:
-        f = getattr(function, p[1])
+        f = getattr(game, p[1])
     except AttributeError:
         print(f"Function {p[1]} unimplemented")
         return
 
     if len(p) == 2:
-        f(game)
+        f()
     elif len(p) == 21:
-        f(game, p[13], p[15], p[17], p[19])
+        f(p[13], p[15], p[17], p[19])
     elif len(p) == 3:
-        f(game, p[2])
+        f(p[2])
 
 
 def p_call(p):

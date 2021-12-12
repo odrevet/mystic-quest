@@ -159,3 +159,16 @@ class Game:
                 pygame.K_DOWN,
             ]:
                 self.hero.is_moving = False
+
+    ## CALLBACKS ##
+    def MUSIC(self, id):
+        print(f"Play music {id}")
+
+    def TELEPORT(self, MM, BB, XX, YY):
+        print(f"Teleport to {MM} {BB} {XX} {YY}")
+        self.hero.x = int(XX, 16) * 8
+        self.hero.y = int(YY, 16) * 8
+        block_number = int(BB, 16)
+        self.map_screen_index_x = 0 # TODO from BB
+        self.map_screen_index_y = 0
+        self.load_map(MM)

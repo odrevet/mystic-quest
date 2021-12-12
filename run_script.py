@@ -1,18 +1,10 @@
-import pygame
 import argparse
 import ply.lex as lex
 import ply.yacc as yacc
 
-from game import Game
 from interpreter import *
 
 if __name__ == "__main__":
-    pygame.init()
-    resolution_screen = (160, 144)
-    resolution_window = (640, 480)
-    surface_window = pygame.display.set_mode(resolution_window)
-    surface_screen = pygame.Surface(resolution_screen)
-    
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--script", help="Script number to call")
     argparser.add_argument(
@@ -39,7 +31,6 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     debug_tokens = args.debug_tokens
-    game = Game()
 
     lexer = lex.lex()
     parser = yacc.yacc()
