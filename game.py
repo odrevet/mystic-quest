@@ -164,8 +164,9 @@ class Game:
                     if self.map_screen_index_x > 0:
                         self.map_screen_index_x -= MAP_WIDTH
                 elif event.key == pygame.K_RIGHT:
-                    # print(f"-> {self.tm.properties}")
                     self.map_screen_index_x += MAP_WIDTH
+                    if self.map_screen_index_x >= int(self.tm.properties['sizeX'], 16) * MAP_WIDTH:
+                         self.map_screen_index_x = 0
         elif event.type == pygame.KEYUP:
             if event.key in [
                 pygame.K_LEFT,
@@ -185,8 +186,8 @@ class Game:
         self.hero.y = int(YY, 16) * 8
         self.block_number = int(BB, 16)
         self.load_map(MM)
-        self.map_screen_index_x = (self.block_number % int(self.tm.properties['sizeX'])) * MAP_WIDTH
-        self.map_screen_index_y = (self.block_number // int(self.tm.properties['sizeX'])) * MAP_HEIGHT
+        self.map_screen_index_x = (self.block_number % int(self.tm.properties['sizeX'], 16)) * MAP_WIDTH
+        self.map_screen_index_y = (self.block_number // int(self.tm.properties['sizeX'], 16)) * MAP_HEIGHT
 
     def SCRIPT_ENTRAR_BLOQUE(self):
         print(f"-> {self.tm.properties}")
