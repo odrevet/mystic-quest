@@ -36,8 +36,8 @@ class Hero(pygame.sprite.Sprite):
             (0, self.frame_index * self.SIZE, self.SIZE, self.SIZE),
         )
 
-        if __debug__:
-            pygame.draw.rect(surface_screen, (42, 42, 42), self.bounding_box)
+        #if __debug__:
+        #    pygame.draw.rect(surface_screen, (42, 42, 42), self.bounding_box)
 
     def update(self):
         self.bounding_box.x = self.x

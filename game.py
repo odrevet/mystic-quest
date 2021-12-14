@@ -98,11 +98,11 @@ class Game:
         elif self.hero.x < 0:
             self.hero.x = 144
             self.map_screen_index_x -= MAP_WIDTH
-        elif self.hero.y + self.hero.SIZE > 160:
+        elif self.hero.y + self.hero.SIZE > MAP_HEIGHT * self.tm.tileheight:
             self.hero.y = 0
             self.map_screen_index_y += MAP_HEIGHT
         elif self.hero.y < 0:
-            self.hero.y = 120
+            self.hero.y = 112
             self.map_screen_index_y -= MAP_HEIGHT
 
         self.hero.update()
@@ -189,14 +189,22 @@ class Game:
         self.hero.y = int(YY, 16) * 8
         self.block_number = int(BB, 16)
         self.load_map(MM)
-        self.map_screen_index_x = (
-            self.block_number % int(self.tm.properties["sizeX"], 16)
-        ) * MAP_WIDTH
-        self.map_screen_index_y = (
-            self.block_number // int(self.tm.properties["sizeX"], 16)
-        ) * MAP_HEIGHT
+
+        size = int(self.tm.properties["sizeX"], 16)
+        self.map_screen_index_y = (self.block_number % size) * MAP_HEIGHT
+        self.map_screen_index_x = (self.block_number // size) * MAP_WIDTH
 
     def SCRIPT_ENTRAR_BLOQUE(self):
-        print(f"-> {self.tm.properties}")
-        print(f"-> {self.tm.get_layer_by_name('Object Layer bloquesA')[0].properties}")
-        print(f"-> {self.tm.get_layer_by_name('Object Layer bloquesB')[0].properties}")
+        bn_half = self.block_number // 2
+        index = bn_half  # TODO index row ordered
+
+        print(self.block_number, bn_half, index)
+
+        if (self.block_number // 2) % 2 == 0:
+            print("A")
+            layer = self.tm.get_layer_by_name('Object Layer bloquesA') 
+        else:
+            print("B")
+            layer = self.tm.get_layer_by_name('Object Layer bloquesB')
+
+        print(layer[index].properties)
