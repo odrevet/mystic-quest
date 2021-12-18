@@ -6,8 +6,9 @@ from interpreter import *
 from hero import *
 
 
-MAP_WIDTH = 10
-MAP_HEIGHT = 8
+# Block size in tiles
+BLOCK_WIDTH = 10
+BLOCK_HEIGHT = 8
 
 
 class Game:
@@ -20,8 +21,8 @@ class Game:
         self.block_number = 0
         self.load_map("00")
 
-        self.map_screen_index_x = 5 * MAP_WIDTH
-        self.map_screen_index_y = 6 * MAP_HEIGHT
+        self.map_screen_index_x = 5 * BLOCK_WIDTH
+        self.map_screen_index_y = 6 * BLOCK_HEIGHT
 
         # script
         self.lexer = lex.lex()
@@ -47,9 +48,9 @@ class Game:
         ) in self.tile_layer:
             if (
                 x > self.map_screen_index_x - 1
-                and x <= self.map_screen_index_x + MAP_WIDTH - 1
+                and x <= self.map_screen_index_x + BLOCK_WIDTH - 1
                 and y > self.map_screen_index_y - 1
-                and y <= self.map_screen_index_y + MAP_HEIGHT - 1
+                and y <= self.map_screen_index_y + BLOCK_HEIGHT - 1
             ):
                 tile = self.tm.get_tile_image_by_gid(gid)
                 surface_screen.blit(
@@ -92,18 +93,18 @@ class Game:
 
         ## Logic
         # check boundaries
-        if self.hero.x + self.hero.SIZE > self.tm.tilewidth * MAP_WIDTH:
+        if self.hero.x + self.hero.SIZE > self.tm.tilewidth * BLOCK_WIDTH:
             self.hero.x = 0
-            self.map_screen_index_x += MAP_WIDTH
+            self.map_screen_index_x += BLOCK_WIDTH
         elif self.hero.x < 0:
             self.hero.x = 144
-            self.map_screen_index_x -= MAP_WIDTH
-        elif self.hero.y + self.hero.SIZE > MAP_HEIGHT * self.tm.tileheight:
+            self.map_screen_index_x -= BLOCK_WIDTH
+        elif self.hero.y + self.hero.SIZE > BLOCK_HEIGHT * self.tm.tileheight:
             self.hero.y = 0
-            self.map_screen_index_y += MAP_HEIGHT
+            self.map_screen_index_y += BLOCK_HEIGHT
         elif self.hero.y < 0:
             self.hero.y = 112
-            self.map_screen_index_y -= MAP_HEIGHT
+            self.map_screen_index_y -= BLOCK_HEIGHT
 
         self.hero.update()
 
@@ -157,17 +158,17 @@ class Game:
             if event.mod & pygame.KMOD_LSHIFT:
                 if event.key == pygame.K_UP:
                     if self.map_screen_index_y > 0:
-                        self.map_screen_index_y -= MAP_HEIGHT
+                        self.map_screen_index_y -= BLOCK_HEIGHT
                 elif event.key == pygame.K_DOWN:
-                    self.map_screen_index_y += MAP_HEIGHT
+                    self.map_screen_index_y += BLOCK_HEIGHT
                 elif event.key == pygame.K_LEFT:
                     if self.map_screen_index_x > 0:
-                        self.map_screen_index_x -= MAP_WIDTH
+                        self.map_screen_index_x -= BLOCK_WIDTH
                 elif event.key == pygame.K_RIGHT:
-                    self.map_screen_index_x += MAP_WIDTH
+                    self.map_screen_index_x += BLOCK_WIDTH
                     if (
                         self.map_screen_index_x
-                        >= int(self.tm.properties["sizeX"], 16) * MAP_WIDTH
+                        >= int(self.tm.properties["sizeX"], 16) * BLOCK_WIDTH
                     ):
                         self.map_screen_index_x = 0
         elif event.type == pygame.KEYUP:
@@ -191,8 +192,8 @@ class Game:
         self.load_map(MM)
 
         size = int(self.tm.properties["sizeX"], 16)
-        self.map_screen_index_y = (self.block_number % size) * MAP_HEIGHT
-        self.map_screen_index_x = (self.block_number // size) * MAP_WIDTH
+        self.map_screen_index_y = (self.block_number % size) * BLOCK_HEIGHT
+        self.map_screen_index_x = (self.block_number // size) * BLOCK_WIDTH
 
     def SCRIPT_ENTRAR_BLOQUE(self):
         bn_half = self.block_number // 2
