@@ -28,8 +28,8 @@ reserved = {
     "let": "LET",
     "var": "VAR",
     # "FOR": "FOR",
-    "SET_ON": "SET_ON",
-    "SET_OFF": "SET_OFF",
+    "FLAG_ON": "FLAG_ON",
+    "FLAG_OFF": "FLAG_OFF",
     "CALL": "CALL",
 }
 
@@ -88,7 +88,7 @@ def p_statement(p):
     | call
     | variable_declaration
     | condition
-    | set
+    | flag
     | NEWLINE
     | END"""
     pass
@@ -158,9 +158,9 @@ def p_condition(p):
         print("skip block")
 
 
-def p_set(p):
-    """set : SET_ON ID
-    | SET_OFF ID"""
+def p_flag(p):
+    """flag : FLAG_ON ID
+    | FLAG_OFF ID"""
     variable = next(
         (variable for variable in variables if variable.name == p[2]),
         None,
@@ -169,7 +169,7 @@ def p_set(p):
     if variable is None:
         print(f"{p[1]}: Variable {p[2]} not found")
     else:
-        variable.value = p[1] == "SET_ON"
+        variable.value = p[1] == "FLAG_ON"
 
 
 def p_error(p):
