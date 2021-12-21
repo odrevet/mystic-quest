@@ -29,6 +29,13 @@ class Hero(pygame.sprite.Sprite):
         self.mp = 6
         self.gold = 50
 
+        self.animations = [
+            [3, 4],
+            [5, 6],
+            [1, 2],
+            [5, 6],
+        ]
+
     def draw(self, surface_screen):
         surface_screen.blit(
             pygame.transform.flip(self.image, True, False) if self.flip else self.image,
@@ -36,9 +43,24 @@ class Hero(pygame.sprite.Sprite):
             (0, self.frame_index * self.SIZE, self.SIZE, self.SIZE),
         )
 
-        #if __debug__:
+        # if __debug__:
         #    pygame.draw.rect(surface_screen, (42, 42, 42), self.bounding_box)
 
     def update(self):
         self.bounding_box.x = self.x
         self.bounding_box.y = self.y + self.SIZE // 2
+
+        # update hero location
+        if self.is_moving:
+            if self.direction == Direction.UP:
+                self.y -= 1
+                self.frame_index = self.animations[0][0]
+            if self.direction == Direction.RIGHT:
+                self.x += 1
+                self.frame_index = self.animations[1][0]
+            if self.direction == Direction.DOWN:
+                self.y += 1
+                self.frame_index = self.animations[2][0]
+            if self.direction == Direction.LEFT:
+                self.x -= 1
+                self.frame_index = self.animations[3][0]

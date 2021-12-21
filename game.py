@@ -80,17 +80,6 @@ class Game:
         self.clock.tick(30)
 
     def update(self):
-        # update hero location
-        if self.hero.is_moving:
-            if self.hero.direction == Direction.UP:
-                self.hero.y -= 1
-            if self.hero.direction == Direction.RIGHT:
-                self.hero.x += 1
-            if self.hero.direction == Direction.DOWN:
-                self.hero.y += 1
-            if self.hero.direction == Direction.LEFT:
-                self.hero.x -= 1
-
         ## Logic
         # check boundaries
         if self.hero.x + self.hero.SIZE > self.tm.tilewidth * BLOCK_WIDTH:
@@ -137,22 +126,18 @@ class Game:
             if event.key == pygame.K_LEFT:
                 self.hero.is_moving = True
                 self.hero.direction = Direction.LEFT
-                self.hero.frame_index = 5
                 self.hero.flip = False
             if event.key == pygame.K_RIGHT:
                 self.hero.is_moving = True
                 self.hero.direction = Direction.RIGHT
-                self.hero.frame_index = 5
                 self.hero.flip = True
             if event.key == pygame.K_UP:
                 self.hero.is_moving = True
                 self.hero.direction = Direction.UP
-                self.hero.frame_index = 3
                 self.hero.flip = False
             if event.key == pygame.K_DOWN:
                 self.hero.is_moving = True
                 self.hero.direction = Direction.DOWN
-                self.hero.frame_index = 1
                 self.hero.flip = False
 
             if event.mod & pygame.KMOD_LSHIFT:
