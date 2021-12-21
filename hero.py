@@ -19,6 +19,7 @@ class Hero(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.frame_index = 1
+        self.animation_index = 0
         self.animation_frame = 0
         self.is_moving = False
         self.flip = False
@@ -53,19 +54,21 @@ class Hero(pygame.sprite.Sprite):
 
         # update hero location
         if self.is_moving:
-            frm = 0
+            self.animation_frame += 0.5
+            if self.animation_frame > 1:
+                self.animation_frame = 0
 
             if self.direction == Direction.UP:
                 self.y -= 1
-                self.animation_frame = 0
+                self.animation_index = 0
             if self.direction == Direction.RIGHT:
                 self.x += 1
-                self.animation_frame = 1
+                self.animation_index = 1
             if self.direction == Direction.DOWN:
                 self.y += 1
-                self.animation_frame = 2
+                self.animation_index = 2
             if self.direction == Direction.LEFT:
                 self.x -= 1
-                self.animation_frame = 3
+                self.animation_index = 3
             
-            self.frame_index = self.animations[self.animation_frame][frm]
+            self.frame_index = self.animations[self.animation_index][int(self.animation_frame)]
