@@ -19,6 +19,7 @@ class Hero(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.frame_index = 1
+        self.animation_frame = 0
         self.is_moving = False
         self.flip = False
         self.bounding_box = pygame.Rect(
@@ -30,10 +31,10 @@ class Hero(pygame.sprite.Sprite):
         self.gold = 50
 
         self.animations = [
-            [3, 4],
-            [5, 6],
-            [1, 2],
-            [5, 6],
+            [3, 4],  #UP
+            [5, 6],  # RIGHT
+            [1, 2],  # DOWN
+            [5, 6],  # LEFT
         ]
 
     def draw(self, surface_screen):
@@ -52,15 +53,19 @@ class Hero(pygame.sprite.Sprite):
 
         # update hero location
         if self.is_moving:
+            frm = 0
+
             if self.direction == Direction.UP:
                 self.y -= 1
-                self.frame_index = self.animations[0][0]
+                self.animation_frame = 0
             if self.direction == Direction.RIGHT:
                 self.x += 1
-                self.frame_index = self.animations[1][0]
+                self.animation_frame = 1
             if self.direction == Direction.DOWN:
                 self.y += 1
-                self.frame_index = self.animations[2][0]
+                self.animation_frame = 2
             if self.direction == Direction.LEFT:
                 self.x -= 1
-                self.frame_index = self.animations[3][0]
+                self.animation_frame = 3
+            
+            self.frame_index = self.animations[self.animation_frame][frm]
