@@ -4,22 +4,22 @@ Download and uncompress QuickJS from https://bellard.org/quickjs/
 
 `make && sudo make install`
 
+# Compile
 
-# Generate jscript.js and assets from Mystic Quest ROM
+`sh build.sh`
+
+Will generate the `jreader`  binary
+
+# Usage
 
 
-jscript.js must be edited to remove integers leading 0 (invald js)
+jreader take as parameter the jscript.js generated from mystic-editor and a function name:
 
-\(0\d
+`./jreader jscripts.js script_01e7`
 
-Then move jscript.js in the project directory
-
-# Compile and run
-
-`sh build.sh && ./jreader jscripts.js script_01e7`
 
 # Sources
 
 * https://bellard.org/quickjs/quickjs.html#QuickJS-C-API
 * https://linuxtut.com/en/16cdbc69d4fd4a3dccbf/
- * https://github.com/Kozova1/quickjs-example
+* https://github.com/Kozova1/quickjs-example
