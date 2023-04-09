@@ -1,100 +1,120 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include <quickjs/quickjs.h>
 
+
+bool flags[0x80] = {false};
+
 JSValue text(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
-    const char *str = JS_ToCString(ctx, argv[0]);
-    puts(str);
-    return JS_UNDEFINED;
+  const char *str = JS_ToCString(ctx, argv[0]);
+  puts(str);
+  return JS_UNDEFINED;
 }
 
 JSValue cond_flags(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
-    const char *str = JS_ToCString(ctx, argv[0]);
-    puts(str);
-    // return JS_FALSE;
-    return JS_TRUE;
+  bool result = true;
+  const char *argstr = JS_ToCString(ctx, argv[0]);
+  char *token = strtok(argstr, ",");
+
+  while (token != NULL) {
+    bool val;
+    int addr = atoi(token);
+
+    if(addr >=0 ){
+      val = flags[addr];
+    }
+    else{
+      val = !flags[~addr];
+    }
+
+    result = result && val;
+    token = strtok(NULL, ",");
+  }
+
+  return result ? JS_TRUE : JS_FALSE;
 }
 
 void initContext(JSContext *ctx)
 {
-    JSValue global = JS_GetGlobalObject(ctx);
-    JS_SetPropertyStr(ctx, global, "text", JS_NewCFunction(ctx, text, "text", 1));
-    JS_SetPropertyStr(ctx, global, "cond_flags", JS_NewCFunction(ctx, cond_flags, "cond_flags", 1));
-    JS_FreeValue(ctx, global);
+  JSValue global = JS_GetGlobalObject(ctx);
+  JS_SetPropertyStr(ctx, global, "text", JS_NewCFunction(ctx, text, "text", 1));
+  JS_SetPropertyStr(ctx, global, "cond_flags", JS_NewCFunction(ctx, cond_flags, "cond_flags", 1));
+  JS_FreeValue(ctx, global);
 }
 
 char *readfile(char *file_name)
 {
-    FILE *fp;
-    long lSize;
-    char *buffer;
+  FILE *fp;
+  long lSize;
+  char *buffer;
 
-    // Read file content into buffer
-    fp = fopen(file_name, "rb");
-    if (!fp)
-        perror(file_name), exit(1);
+  // Read file content into buffer
+  fp = fopen(file_name, "rb");
+  if (!fp)
+    perror(file_name), exit(1);
 
-    fseek(fp, 0L, SEEK_END);
-    lSize = ftell(fp);
-    rewind(fp);
+  fseek(fp, 0L, SEEK_END);
+  lSize = ftell(fp);
+  rewind(fp);
 
-    buffer = calloc(1, lSize + 1);
-    if (!buffer)
-        fclose(fp), fputs("memory alloc fails", stderr), exit(1);
+  buffer = calloc(1, lSize + 1);
+  if (!buffer)
+    fclose(fp), fputs("memory alloc fails", stderr), exit(1);
 
-    if (1 != fread(buffer, lSize, 1, fp))
-        fclose(fp), free(buffer), fputs("entire read fails", stderr), exit(1);
+  if (1 != fread(buffer, lSize, 1, fp))
+    fclose(fp), free(buffer), fputs("entire read fails", stderr), exit(1);
 
-    fclose(fp);
-    return buffer;
+  fclose(fp);
+  return buffer;
 }
 
 int main(int argc, char *argv[])
 {
-    char *file_name = argv[1];
-    char *function_name = argv[2];
+  char *file_name = argv[1];
+  char *function_name = argv[2];
 
-    char *buffer = readfile(file_name);
+  char *buffer = readfile(file_name);
 
-    // QJS runtime
-    JSRuntime *rt = JS_NewRuntime();
-    JSContext *ctx = JS_NewContext(rt);
+  // QJS runtime
+  JSRuntime *rt = JS_NewRuntime();
+  JSContext *ctx = JS_NewContext(rt);
 
-    initContext(ctx);
+  initContext(ctx);
 
-    if (JS_IsException(JS_Eval(ctx, buffer, strlen(buffer), "<input>", JS_EVAL_FLAG_STRICT)))
+  if (JS_IsException(JS_Eval(ctx, buffer, strlen(buffer), "<input>", JS_EVAL_FLAG_STRICT)))
     {
-        JSValue e = JS_GetException(ctx);
-        JS_FreeContext(ctx);
-        JS_FreeRuntime(rt);
-        free(buffer);
-        return -1;
+      JSValue e = JS_GetException(ctx);
+      JS_FreeContext(ctx);
+      JS_FreeRuntime(rt);
+      free(buffer);
+      return -1;
     }
-    free(buffer);
+  free(buffer);
 
-    JSValue global = JS_GetGlobalObject(ctx);
-    JSValue function = JS_GetPropertyStr(ctx, global, function_name);
-    JSValue jsResult = JS_Call(ctx, function, global, 0, NULL);
+  JSValue global = JS_GetGlobalObject(ctx);
+  JSValue function = JS_GetPropertyStr(ctx, global, function_name);
+  JSValue jsResult = JS_Call(ctx, function, global, 0, NULL);
 
-    if (JS_IsException(jsResult))
+  if (JS_IsException(jsResult))
     {
-        printf("ERROR...\n");
-        return 0;
-    }
-
-    // Free memory
-    JSValue used[] = {jsResult, function, global};
-    for (int i = 0; i < sizeof(used) / sizeof(JSValue); ++i)
-    {
-        JS_FreeValue(ctx, used[i]);
+      printf("ERROR...\n");
+      return 0;
     }
 
-    JS_FreeContext(ctx);
-    JS_FreeRuntime(rt);
+  // Free memory
+  JSValue used[] = {jsResult, function, global};
+  for (int i = 0; i < sizeof(used) / sizeof(JSValue); ++i)
+    {
+      JS_FreeValue(ctx, used[i]);
+    }
 
-    return 0;
+  JS_FreeContext(ctx);
+  JS_FreeRuntime(rt);
+
+  return 0;
 }
