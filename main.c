@@ -11,7 +11,7 @@ JSValue text(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
     return JS_UNDEFINED;
 }
 
-JSValue if_flags(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
+JSValue cond_flags(JSContext *ctx, JSValueConst jsThis, int argc, JSValueConst *argv)
 {
     const char *str = JS_ToCString(ctx, argv[0]);
     puts(str);
@@ -23,7 +23,7 @@ void initContext(JSContext *ctx)
 {
     JSValue global = JS_GetGlobalObject(ctx);
     JS_SetPropertyStr(ctx, global, "text", JS_NewCFunction(ctx, text, "text", 1));
-    JS_SetPropertyStr(ctx, global, "if_flags", JS_NewCFunction(ctx, if_flags, "if_flags", 1));
+    JS_SetPropertyStr(ctx, global, "cond_flags", JS_NewCFunction(ctx, cond_flags, "cond_flags", 1));
     JS_FreeValue(ctx, global);
 }
 
